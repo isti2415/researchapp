@@ -1,5 +1,5 @@
 import { useOrganization, clerkClient } from "@clerk/nextjs";
-import Header from "@/components/Header";``
+import Header from "@/components/Header"; ``
 import {
   Accordion,
   AccordionContent,
@@ -9,13 +9,13 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "@/components/ui/table";
 import { useEffect, useState } from "react";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useRouter } from "next/router";
 import { Loader2Icon } from "lucide-react";
-import AvatarGenerator from "@/components/createAvatar";
+import { DataTable } from "../../../components/ui/data-table/data-table";
+import { columns } from "./paper-columns";
 
 const Project = () => {
   const organization = useOrganization().organization;
@@ -57,19 +57,17 @@ const Project = () => {
         <div className="text-xl font-bold">{organization?.name}</div>
         <Accordion type="single" collapsible className="mt-4">
           <AccordionItem value="Details">
-            <AccordionTrigger>Store Project Details</AccordionTrigger>
+            <AccordionTrigger>About the project</AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-col gap-4">
-                <div className="text-xl font-bold">About the project</div>
                 <div className="text-lg">Coming soon...</div>
               </div>
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="Notes">
-            <AccordionTrigger>Store Project Notes and Ideas</AccordionTrigger>
+            <AccordionTrigger>Notes</AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-col gap-4">
-                <div className="text-xl font-bold">Notes</div>
                 <div className="text-lg">Coming soon...</div>
               </div>
             </AccordionContent>
@@ -77,39 +75,14 @@ const Project = () => {
           <AccordionItem value="Papers">
             <AccordionTrigger>
               <div className="flex items-center justify-between w-full">
-                <div className="text-xl font-bold">Papers</div>
+                <div>Papers</div>
                 <Link href={`/projects/${organization?.slug}/papers/new`} className={cn("mr-4", buttonVariants({ variant: "outline" }))}>
                   Add Paper
                 </Link>
               </div>
             </AccordionTrigger>
             <AccordionContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-1/12">Added By</TableHead>
-                    <TableHead className="w-1/3">Title</TableHead>
-                    <TableHead className="w-1/4">Publisher</TableHead>
-                    <TableHead className="w-1/12">Year</TableHead>
-                    <TableHead className="w-1/12">Country</TableHead>
-                    <TableHead className="w-1/6">Read By</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {papers.map((paper, index) => (
-                    <TableRow key={index} onClick={() => router.push(`/projects/${organization?.slug}/papers/${paper?.id}`)} className="cursor-pointer">
-                      <TableCell><AvatarGenerator fullname={paper.addedBy?.fullname} image={paper.addedBy?.image} /></TableCell>
-                      <TableCell>{paper.title}</TableCell>
-                      <TableCell>{paper.publisher}</TableCell>
-                      <TableCell>{paper.year}</TableCell>
-                      <TableCell>{paper.country}</TableCell>
-                      <TableCell>{paper.readBy.map(user => (
-                        <AvatarGenerator key={user.id} fullname={user.fullname} image={user.image} />
-                      ))}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <DataTable columns={columns} data={papers} />
             </AccordionContent>
           </AccordionItem>
         </Accordion>

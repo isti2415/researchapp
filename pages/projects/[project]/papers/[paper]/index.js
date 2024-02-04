@@ -12,7 +12,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Loader2Icon, MoveUpRight } from "lucide-react";
+import { Eye, EyeOff, Loader2Icon, MoveUpRight } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { db } from '@/firebase'
@@ -50,8 +50,8 @@ const Paper = () => {
     if (organization) {
       const unsubscribe = onSnapshot(doc(db, "projects", organization.id, "papers", router.query.paper), (doc) => {
         setPaper(doc.data());
-        setReadByUsers(paper.readBy);
-        setComments(paper.comments);
+        setReadByUsers(doc.data().readBy);
+        setComments(doc.data().comments);
       })
       return () => unsubscribe();
     }
@@ -258,9 +258,20 @@ const Paper = () => {
                   <Tooltip>
                     <TooltipTrigger>
                       {!isRead ? (
-                        <Badge variant="destructive">Unread</Badge>
+                        <div className={`${buttonVariants({
+                          size: "sm",
+                          variant: "destructive",
+                        })}`}>
+                          <EyeOff className="mr-2" />
+                          Unread
+                        </div>
                       ) : (
-                        <Badge className="bg-green-500">Read</Badge>
+                        <div className={`${buttonVariants({
+                          size: "sm",
+                        })} bg-green-600 hover:bg-green-700`}>
+                          <Eye className="mr-2" />
+                          Read
+                        </div>
                       )}
                     </TooltipTrigger>
                     <TooltipContent>
@@ -448,7 +459,7 @@ const Paper = () => {
                                   </DialogClose>
                                   <Button
                                     variant="destructive"
-                                    onClick={() => handleCommentDelete({commentId: comment.id})}
+                                    onClick={() => handleCommentDelete({ commentId: comment.id })}
                                   >
                                     Delete
                                   </Button>

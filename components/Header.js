@@ -24,12 +24,10 @@ const Header = () => {
   }, [organization]);
 
   const deleteOrganization = async () => {
-    console.log("Deleting organization: ", organization.id);
     try {
       await clerkClient.organizations.deleteOrganization(organization.id);
       // Additional logic after successfully deleting the organization, if needed
     } catch (deleteError) {
-      console.error("Error deleting organization: ", deleteError);
       // Handle the error from organization deletion, if needed
     }
   };
@@ -45,7 +43,6 @@ const Header = () => {
     const q = query(projectsRef, where("slug", "==", organization.slug));
     const querySnapshot = await getDocs(q);
     if (querySnapshot.size > 0) {
-      console.log("Project already exists");
       return;
     }
 
@@ -54,9 +51,7 @@ const Header = () => {
         doc(db, "projects", organization.id),
         newOrganization
       );
-      console.log("Document written with ID: ", results.id);
     } catch (error) {
-      console.error("Error adding document: ", error);
       deleteOrganization();
     }
   };
